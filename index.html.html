@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mulheres Empoderadas Giram e Ganham</title>
+
+<style>
+body{
+    margin:0;
+    font-family: Arial, sans-serif;
+    text-align:center;
+    background:#fff;
+}
+
+h1{
+    color:#e91e63;
+    font-size:22px;
+}
+
+h2{
+    color:#ff6f00;
+    font-weight:normal;
+    font-size:16px;
+}
+
+#wheel-container{
+    position:relative;
+    width:320px;
+    height:320px;
+    margin:20px auto;
+}
+
+#wheel{
+    width:100%;
+    height:100%;
+    border-radius:50%;
+    border:8px solid #ff6f00;
+    transition: transform 4s cubic-bezier(0.33, 1, 0.68, 1);
+}
+
+.pointer{
+    position:absolute;
+    top:-18px;
+    left:50%;
+    transform:translateX(-50%);
+    font-size:30px;
+}
+
+button{
+    background:black;
+    color:white;
+    padding:12px 25px;
+    border:none;
+    margin-top:20px;
+    cursor:pointer;
+}
+
+.result{
+    display:none;
+    padding:20px;
+}
+
+.prize{
+    font-size:24px;
+    color:#e91e63;
+    margin:15px 0;
+}
+
+.footer{
+    font-size:12px;
+    margin-top:30px;
+    color:#555;
+}
+</style>
+</head>
+
+<body>
+
+<h1>🌸 Mulheres Empoderadas Giram e Ganham 🌸</h1>
+<h2>Clube Melissa Santarém • Especial Mês das Mulheres</h2>
+
+<div id="wheel-container">
+    <div class="pointer">▼</div>
+    <canvas id="wheelCanvas" width="320" height="320"></canvas>
+</div>
+
+<button onclick="spin()">GIRAR ROLETA</button>
+<p id="contador"></p>
+
+<div class="result" id="result">
+    <h1 id="titulo"></h1>
+    <div class="prize" id="premio"></div>
+
+    <p>
+    ✔ Seguir @clubemelissasantarem<br>
+    ✔ Tirar print da tela<br>
+    ✔ Apresentar no caixa
+    </p>
+
+    <p style="color:#ff6f00; font-style:italic;">
+    “Ser mulher é transformar desafios em força e sonhos em realidade.”
+    </p>
+
+    <div class="footer">
+    Válido 1 prêmio por CPF. Não cumulativo. Promoção exclusiva para loja física.
+    </div>
+
+    <button onclick="voltar()">Voltar</button>
+</div>
+
+<script>
+const canvas = document.getElementById("wheelCanvas");
+const ctx = canvas.getContext("2d");
+
+const options = ["10% OFF","5% OFF","GANHE UM MIMO","TENTE OUTRA VEZ"];
+const colors = ["#e91e63","#ff6f00","#000","#ffb74d"];
+
+const total = options.length;
+const arc = 2 * Math.PI / total;
+
+for(let i=0;i<total;i++){
+    ctx.beginPath();
+    ctx.fillStyle = colors[i];
+    ctx.moveTo(160,160);
+    ctx.arc(160,160,160,i*arc,(i+1)*arc);
+    ctx.fill();
+
+    ctx.save();
+    ctx.translate(160,160);
+    ctx.rotate(i*arc + arc/2);
+    ctx.fillStyle="#fff";
+    ctx.font="bold 14px Arial";
+    ctx.fillText(options[i],50,5);
+    ctx.restore();
+}
+
+let spins = localStorage.getItem("spins") ? parseInt(localStorage.getItem("spins")) : 0;
+document.getElementById("contador").innerText = "Tentativas usadas: " + spins + " / 2";
+
+function spin(){
+
+    if(spins >= 2){
+        alert("Você já utilizou suas 2 tentativas 💖");
+        return;
+    }
+
+    spins++;
+    localStorage.setItem("spins", spins);
+    document.getElementById("contador").innerText = "Tentativas usadas: " + spins + " / 2";
+
+    let rand = Math.random()*100;
+    let index;
+
+    if(rand < 70){
+        index = 0;
+    } else if(rand < 85){
+        index = 1;
+    } else if(rand < 95){
+        index = 2;
+    } else {
+        index = 3;
+    }
+
+    let degrees = 360*5 + (360 - index*(360/total)) - (360/total)/2;
+
+    canvas.style.transition="transform 4s ease-out";
+    canvas.style.transform="rotate("+degrees+"deg)";
+
+    setTimeout(()=>{
+        document.getElementById("result").style.display="block";
+        if(index === 3){
+            document.getElementById("titulo").innerText="Não foi dessa vez 💕";
+            document.getElementById("premio").innerText="Mas você ainda tem outra chance!";
+        } else {
+            document.getElementById("titulo").innerText="Parabéns, Mulher Empoderada!";
+            document.getElementById("premio").innerText="VOCÊ GANHOU " + options[index];
+        }
+    },4000);
+}
+
+function voltar(){
+    document.getElementById("result").style.display="none";
+}
+</script>
+
+</body>
+</html>
